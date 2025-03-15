@@ -67,9 +67,35 @@ show_list_helper(X) :-
 
 show_list(_) :- show_list_helper(0).
 
-% for testing:
-% (
-%   init(_),
-%   generate_list(_),
-%   show_list(_)
-% ).
+set_element(X, Y, Value) :-
+    retractall(list_element_2d(X, Y, _)),
+    assertz(list_element_2d(X, Y, Value)).
+
+get_element(X, Y, Value) :-
+    list_element_2d(X, Y, Value).
+
+make_opponent_move(_).
+
+move_element_down(X, Y) :-
+    list_sizeX(SizeX),
+    X < SizeX - 1,
+    X1 is X + 1,
+    get_element(X1, Y, 0),
+    get_element(X, Y, Element),
+    set_element(X1, Y, Element),
+    set_element(X, Y, 0),
+    move_element_down(X1, Y).
+
+move_element_down(_, _).
+
+make_move(Y) :-
+    get_element(0, Y, 0) ->
+        write('Making move in column '), write(Y), nl,
+        set_element(0, Y, 1),
+        move_element_down(0, Y),
+        show_list(_),
+        write('Oponent\'s move...'), nl,
+        make_opponent_move(_),
+        show_list(_);
+
+        write('Can\'t make moves in column '), write(Y), write('. It is already full.').
