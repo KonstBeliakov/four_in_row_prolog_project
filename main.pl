@@ -1,13 +1,21 @@
 :- dynamic list_element_2d/3.
 :- dynamic list_sizeX/1.
 :- dynamic list_sizeY/1.
+:- dynamic currentColor/1.
+
+setColor(Color) :-
+    retractall(currentColor(_)),
+	assert(currentColor(Color)).
 
 init(_) :-
     retractall(list_sizeX(_)),
     assert(list_sizeX(6)),
 
 	retractall(list_sizeY(_)),
-	assert(list_sizeY(7)).
+	assert(list_sizeY(7)),
+
+	setColor(1),
+    generate_list(_).
 
 generate_list_row_helper(RowNumber, Y) :-
     list_sizeY(SizeY),
@@ -88,14 +96,29 @@ move_element_down(X, Y) :-
 
 move_element_down(_, _).
 
-make_move(Y) :-
-    get_element(0, Y, 0) ->
-        write('Making move in column '), write(Y), nl,
-        set_element(0, Y, 1),
+make_move_helper(Y, Color) :-
+    (get_element(0, Y, 0)->
+    	write('Making move in column '), write(Y), write(':'), nl,
+        set_element(0, Y, Color),
         move_element_down(0, Y),
         show_list(_),
-        write('Oponent\'s move...'), nl,
-        make_opponent_move(_),
-        show_list(_);
+        !
+    ;   write('Can\'t make moves in column '), write(Y), write('.'), nl,
+        !
+    ).
 
-        write('Can\'t make moves in column '), write(Y), write('. It is already full.').
+make_move_helper(_, _).
+
+make_move(Y) :-
+    currentColor(Color),
+    make_move_helper(Y, Color),
+    currentColor(1) ->
+        setColor(2);
+        setColor(1).
+
+% to test you can run:
+% init(_),
+% show_list(_),
+% make_move(1),
+% make_move(2),
+% make_move(1).
