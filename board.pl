@@ -26,7 +26,7 @@ generate_list_helper(X) :-
     list_sizeX(SizeX),
     X >= SizeX.
 
-generate_list(_) :- generate_list_helper(0);true.
+generate_list :- generate_list_helper(0);true.
 
 show_list_row_helper(X, Y) :-
     list_sizeY(SizeY),
@@ -74,7 +74,7 @@ write_line(Char) :-
     Size1 is SizeY * 2 + 1,
     write_line_helper(Char, Size1).
 
-show_list(_) :-
+show_list :-
     write_line('-'),
     show_list_helper(0).
 

@@ -6,7 +6,7 @@ setColor(Color) :-
     retractall(currentColor(_)),
 	assert(currentColor(Color)).
 
-init(_) :-
+init :-
     retractall(list_sizeX(_)),
     assert(list_sizeX(6)),
 
@@ -14,9 +14,9 @@ init(_) :-
 	assert(list_sizeY(7)),
 
 	setColor(1),
-    generate_list(_).
+    generate_list.
 
-make_opponent_move(_).
+make_opponent_move.
 
 move_element_down(X, Y) :-
     list_sizeX(SizeX),
@@ -32,12 +32,12 @@ move_element_down(_, _).
 
 make_move_helper(Y, Color) :-
     (get_element(0, Y, 0)->
-    	write('Making move in column '), write(Y), write(':'), nl,
+        format("Making move in column ~w:\n", [Y]),
         set_element(0, Y, Color),
         move_element_down(0, Y),
-        show_list(_),
+        show_list,
         !
-    ;   write('Can\'t make moves in column '), write(Y), write('.'), nl,
+    ;   format("Can't make moves in column ~w.", [Y]),
         !
     ).
 
