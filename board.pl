@@ -26,31 +26,35 @@ generate_list_helper(X) :-
     list_sizeX(SizeX),
     X >= SizeX.
 
-generate_list(_) :- generate_list_helper(0).
+generate_list(_) :- generate_list_helper(0);true.
 
 show_list_row_helper(X, Y) :-
     list_sizeY(SizeY),
-    (Y < SizeY ->
-    	list_element_2d(X, Y, Element),
-    	write(Element), write(' '),
-    	Y1 is Y + 1,
-    	show_list_row_helper(X, Y1);
+    Y < SizeY,
+    list_element_2d(X, Y, Element),
+    (Element =:= 0 ->
+    	write(' ')
 
-    	nl
-    ).
+    ;   write(Element)
+    ),
+    write('|'),
+    Y1 is Y + 1,
+    show_list_row_helper(X, Y1).
 
 show_list_row_helper(Y) :-   % когда X >= SizeX, ничего не делаем
     list_sizeY(SizeY),
-    Y >= SizeY,
-    nl.
+    Y >= SizeY.
 
-show_list_row(X) :- show_list_row_helper(X, 0).
+show_list_row(X) :-
+    write('|'),
+    (show_list_row_helper(X, 0); true),
+    nl.
 
 show_list_helper(X) :-
     list_sizeX(SizeX),
     X < SizeX,
-    (show_list_row(X); write('\n')),
-    write('\n'),
+    show_list_row(X),
+    write_line('-'),
     X1 is X + 1,
     show_list_helper(X1).
 
@@ -58,7 +62,21 @@ show_list_helper(X) :-
     list_sizeX(SizeX),
     X >= SizeX.
 
-show_list(_) :- show_list_helper(0).
+write_line_helper(_, 0) :-
+    nl.
+write_line_helper(Char, N):-
+    write(Char),
+    N1 is N - 1,
+    write_line_helper(Char, N1).
+
+write_line(Char) :-
+    list_sizeY(SizeY),
+    Size1 is SizeY * 2 + 1,
+    write_line_helper(Char, Size1).
+
+show_list(_) :-
+    write_line('-'),
+    show_list_helper(0).
 
 set_element(X, Y, Value) :-
     retractall(list_element_2d(X, Y, _)),
