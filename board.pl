@@ -9,11 +9,12 @@ generate_list_row_helper(RowNumber, Y) :-
     Y1 is Y + 1,
     generate_list_row_helper(RowNumber, Y1).
 
-generate_list_row_helper(_, Y) :-   % когда X >= SizeX, ничего не делаем.
+generate_list_row_helper(_, Y) :-
     list_sizeY(SizeY),
     Y >= SizeY.
 
-generate_list_row(RowNumber) :- generate_list_row_helper(RowNumber, 0).
+generate_list_row(RowNumber) :-
+    generate_list_row_helper(RowNumber, 0).
 
 generate_list_helper(X) :-
     list_sizeX(SizeX),
@@ -26,22 +27,24 @@ generate_list_helper(X) :-
     list_sizeX(SizeX),
     X >= SizeX.
 
-generate_list :- generate_list_helper(0);true.
+generate_list :-
+    generate_list_helper(0);
+    true.
 
 show_list_row_helper(X, Y) :-
     list_sizeY(SizeY),
     Y < SizeY,
     list_element_2d(X, Y, Element),
     (Element =:= 0 ->
-    	write(' ')
-
-    ;   write(Element)
+        write(' ')
+    ;
+        write(Element)
     ),
     write('|'),
     Y1 is Y + 1,
     show_list_row_helper(X, Y1).
 
-show_list_row_helper(Y) :-   % когда X >= SizeX, ничего не делаем
+show_list_row_helper(Y) :-
     list_sizeY(SizeY),
     Y >= SizeY.
 
@@ -84,3 +87,67 @@ set_element(X, Y, Value) :-
 
 get_element(X, Y, Value) :-
     list_element_2d(X, Y, Value).
+
+
+
+check_horizontal_win :-
+    list_sizeX(SX),
+    list_sizeY(SY),
+    EndX is SX - 1,
+    EndY is SY - 3,
+    between(0, EndX, X),
+    between(0, EndY, Y),
+    get_element(X, Y, P),
+    Y1 is Y + 1,
+    Y2 is Y + 2,
+    Y3 is Y + 3,
+    get_element(X, Y1, P),
+    get_element(X, Y2, P),
+    get_element(X, Y3, P),
+    P \= 0.
+
+check_vertical_win :-
+    list_sizeX(SX),
+    list_sizeY(SY),
+    EndX is SX - 3,
+    EndY is SY - 1,
+    between(0, EndX, X),
+    between(0, EndY, Y),
+    get_element(X, Y, P),
+    X1 is X + 1,
+    X2 is X + 2,
+    X3 is X + 3,
+    get_element(X1, Y, P),
+    get_element(X2, Y, P),
+    get_element(X3, Y, P),
+    P \= 0.
+
+check_diagonal_win :-
+    list_sizeX(SX),
+    list_sizeY(SY),
+    EndX is SX - 3,
+    EndY is SY - 3,
+    between(0, EndX, X),
+    between(0, EndY, Y),
+    get_element(X, Y, P),
+    X1 is X + 1,
+    X2 is X + 2,
+    X3 is X + 3,
+
+    Y1 is Y + 1,
+    Y2 is Y + 2,
+    Y3 is Y + 3,
+    get_element(X1, Y1, P),
+    get_element(X2, Y2, P),
+    get_element(X3, Y3, P),
+    P \= 0.
+
+check_wins :-
+    check_horizontal_win;
+    check_vertical_win;
+    check_diagonal_win.
+
+are_empty_cells :-
+    get_element(0, Y, E),
+    E =:= 0.
+

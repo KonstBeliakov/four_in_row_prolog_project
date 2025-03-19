@@ -27,7 +27,6 @@ move_element_down(X, Y) :-
     set_element(X1, Y, Element),
     set_element(X, Y, 0),
     move_element_down(X1, Y).
-
 move_element_down(_, _).
 
 make_move_helper(Y, Color) :-
@@ -37,7 +36,7 @@ make_move_helper(Y, Color) :-
         move_element_down(0, Y),
         show_list,
         !
-    ;   format("Can't make moves in column ~w.", [Y]),
+    ;   format("Can't make moves in column ~w.\n", [Y]),
         !
     ).
 
@@ -46,13 +45,13 @@ make_move_helper(_, _).
 make_move(Y) :-
     currentColor(Color),
     make_move_helper(Y, Color),
-    currentColor(1) ->
-        setColor(2);
-        setColor(1).
-
-% to test you can run:
-% init(_),
-% show_list(_),
-% make_move(1),
-% make_move(2),
-% make_move(1).
+    (   check_wins ->
+        format('Player ~w wins!\n', [Color])
+    ;   \+are_empty_cells ->
+        write('Draw! No valid moves anymore.\n')
+    ;   true
+    ),
+    (   currentColor(1) ->
+        setColor(2)
+    ;   setColor(1)
+    ).
